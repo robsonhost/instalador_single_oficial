@@ -714,6 +714,15 @@ cria_deploy_base() {
   {
     sudo useradd -m -p $(openssl passwd -1 ${senha_deploy}) -s /bin/bash -G sudo deploy
     sudo usermod -aG sudo deploy
+    
+    # Cria a pasta da empresa no diretório do deploy
+    printf "${WHITE} >> Criando pasta para os arquivos da aplicação...\n"
+    echo
+    mkdir -p /home/deploy/${empresa}
+    chown deploy:deploy /home/deploy/${empresa}
+    chmod 755 /home/deploy/${empresa}
+    printf "${GREEN} >> Pasta /home/deploy/${empresa} criada com sucesso!\n"
+    echo
     sleep 2
   } || trata_erro "cria_deploy_base"
 }
