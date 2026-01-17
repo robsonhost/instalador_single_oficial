@@ -34,7 +34,7 @@ banner() {
   printf "██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║     ██║     ╚════██║██║███╗██║██║\n"
   printf "██║██║ ╚████║███████╗   ██║   ██║  ██║███████╗███████╗███████╗╚███╔███╔╝███████╗\n"
   printf "╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ╚══╝╚══╝ ╚══════╝\n"
-  printf "                                INSTALADOR 6.1\n"
+  printf "                            WebSite Vix - INSTALADOR\n"
   printf "\n\n"
 }
 
@@ -58,8 +58,6 @@ salvar_variaveis() {
   echo "numero_suporte=${numero_suporte}" >>$ARQUIVO_VARIAVEIS
   echo "facebook_app_id=${facebook_app_id}" >>$ARQUIVO_VARIAVEIS
   echo "facebook_app_secret=${facebook_app_secret}" >>$ARQUIVO_VARIAVEIS
-  echo "github_token=${github_token}" >>$ARQUIVO_VARIAVEIS
-  echo "repo_url=${repo_url}" >>$ARQUIVO_VARIAVEIS
   echo "proxy=${proxy}" >>$ARQUIVO_VARIAVEIS
   echo "backend_port=${backend_port}" >>$ARQUIVO_VARIAVEIS
   echo "frontend_port=${frontend_port}" >>$ARQUIVO_VARIAVEIS
@@ -70,8 +68,8 @@ carregar_variaveis() {
   if [ -f $ARQUIVO_VARIAVEIS ]; then
     source $ARQUIVO_VARIAVEIS
   else
-    empresa="multiflow"
-    nome_titulo="MultiFlow"
+    empresa="websitevix"
+    nome_titulo="WebSite Vix"
   fi
 }
 
@@ -107,7 +105,7 @@ verificar_arquivos_existentes() {
     printf "${YELLOW} >> Dados de instalação anteriores detectados.\n"
     echo
     carregar_etapa
-    if [ "$etapa" -eq 21 ]; then
+    if [ "$etapa" -eq 20 ]; then
       printf "${WHITE}>> Instalação já concluída.\n"
       printf "${WHITE}>> Deseja resetar as etapas e começar do zero? (S/N): ${WHITE}\n"
       echo
@@ -121,7 +119,7 @@ verificar_arquivos_existentes() {
         sleep 2
         menu
       fi
-    elif [ "$etapa" -lt 21 ]; then
+    elif [ "$etapa" -lt 20 ]; then
       printf "${YELLOW} >> Instalação Incompleta Detectada na etapa $etapa. \n"
       printf "${WHITE} >> Deseja continuar de onde parou? (S/N): ${WHITE}\n"
       echo
@@ -227,8 +225,7 @@ instalar_whatsmeow() {
     printf "${YELLOW}   entre em contato com o suporte:${WHITE}\n"
     echo
     printf "${BLUE}   📱 WhatsApp:${WHITE}\n"
-    printf "${WHITE}   • https://wa.me/55${WHITE}\n"
-    printf "${WHITE}   • https://wa.me/558${WHITE}\n"
+    printf "${WHITE}   • https://wa.me/5527992494563${WHITE}\n"
     echo
     printf "${RED}   Instalação interrompida.${WHITE}\n"
     printf "${RED}══════════════════════════════════════════════════════════════════${WHITE}\n"
@@ -409,42 +406,37 @@ instalacao_base() {
     salvar_etapa 13
   fi
   if [ "$etapa" -le "13" ]; then
-    instala_git_base || trata_erro "instala_git_base"
+    baixa_codigo_base || trata_erro "baixa_codigo_base"
     salvar_etapa 14
   fi
   if [ "$etapa" -le "14" ]; then
-    codifica_clone_base || trata_erro "codifica_clone_base"
-    baixa_codigo_base || trata_erro "baixa_codigo_base"
+    instala_backend_base || trata_erro "instala_backend_base"
     salvar_etapa 15
   fi
   if [ "$etapa" -le "15" ]; then
-    instala_backend_base || trata_erro "instala_backend_base"
+    instala_frontend_base || trata_erro "instala_frontend_base"
     salvar_etapa 16
   fi
   if [ "$etapa" -le "16" ]; then
-    instala_frontend_base || trata_erro "instala_frontend_base"
+    config_cron_base || trata_erro "config_cron_base"
     salvar_etapa 17
   fi
   if [ "$etapa" -le "17" ]; then
-    config_cron_base || trata_erro "config_cron_base"
-    salvar_etapa 18
-  fi
-  if [ "$etapa" -le "18" ]; then
     if [ "${proxy}" == "nginx" ]; then
       config_nginx_base || trata_erro "config_nginx_base"
-      salvar_etapa 19
+      salvar_etapa 18
     elif [ "${proxy}" == "traefik" ]; then
       config_traefik_base || trata_erro "config_traefik_base"
-      salvar_etapa 19
+      salvar_etapa 18
     fi
   fi
-  if [ "$etapa" -le "19" ]; then
+  if [ "$etapa" -le "18" ]; then
     config_latencia_base || trata_erro "config_latencia_base"
-    salvar_etapa 20
+    salvar_etapa 19
   fi
-  if [ "$etapa" -le "20" ]; then
+  if [ "$etapa" -le "19" ]; then
     fim_instalacao_base || trata_erro "fim_instalacao_base"
-    salvar_etapa 21
+    salvar_etapa 20
   fi
 }
 
@@ -594,19 +586,6 @@ questoes_variaveis_base() {
   echo
   read -p "> " facebook_app_secret
   echo
-  # DEFINE TOKEN GITHUB
-  banner
-  printf "${WHITE} >> Digite seu TOKEN de acesso pessoal do GitHub: \n"
-  printf "${WHITE} >> Passo a Passo para gerar o seu TOKEN no link ${BLUE}https://bit.ly/token-github ${WHITE} \n"
-  echo
-  read -p "> " github_token
-  echo
-  # DEFINE LINK REPO GITHUB
-  banner
-  printf "${WHITE} >> Digite a URL do repositório privado no GitHub: \n"
-  echo
-  read -p "> " repo_url
-  echo
 }
 
 # Define proxy usado
@@ -690,8 +669,6 @@ dados_instalacao_base() {
   printf "   ${WHITE}Numero de Suporte: ----->> ${YELLOW}${numero_suporte}\n"
   printf "   ${WHITE}FACEBOOK_APP_ID: ------->> ${YELLOW}${facebook_app_id}\n"
   printf "   ${WHITE}FACEBOOK_APP_SECRET: --->> ${YELLOW}${facebook_app_secret}\n"
-  printf "   ${WHITE}Token GitHub: ---------->> ${YELLOW}${github_token}\n"
-  printf "   ${WHITE}URL do Repositório: ---->> ${YELLOW}${repo_url}\n"
   printf "   ${WHITE}Proxy Usado: ----------->> ${YELLOW}${proxy}\n"
   printf "   ${WHITE}Porta Backend: --------->> ${YELLOW}${backend_port}\n"
   printf "   ${WHITE}Porta Frontend: -------->> ${YELLOW}${frontend_port}\n"
@@ -1312,58 +1289,35 @@ EOF
   } || trata_erro "cria_banco_base"
 }
 
-# Instala Git
-instala_git_base() {
-  banner
-  printf "${WHITE} >> Instalando o GIT...\n"
-  echo
-  {
-    sudo su - root <<EOF
-  apt install -y git
-  apt -y autoremove
-EOF
-    sleep 2
-  } || trata_erro "instala_git_base"
-}
-
-# Função para codificar URL de clone
-codifica_clone_base() {
-  local length="${#1}"
-  for ((i = 0; i < length; i++)); do
-    local c="${1:i:1}"
-    case $c in
-    [a-zA-Z0-9.~_-]) printf "$c" ;;
-    *) printf '%%%02X' "'$c" ;;
-    esac
-  done
-}
-
-# Clona código de repo privado
+# Verifica e prepara código já existente no servidor
 baixa_codigo_base() {
   banner
-  printf "${WHITE} >> Fazendo download do ${nome_titulo}...\n"
+  printf "${WHITE} >> Verificando arquivos do ${nome_titulo} no servidor...\n"
   echo
   {
-    if [ -z "${repo_url}" ] || [ -z "${github_token}" ]; then
-      printf "${WHITE} >> Erro: URL do repositório ou token do GitHub não definidos.\n"
-      exit 1
-    fi
-
-    github_token_encoded=$(codifica_clone_base "${github_token}")
-    github_url=$(echo ${repo_url} | sed "s|https://|https://${github_token_encoded}@|")
-
     dest_dir="/home/deploy/${empresa}/"
 
-    git clone ${github_url} ${dest_dir}
-    echo
-    if [ $? -eq 0 ]; then
-      printf "${WHITE} >> Código baixado, continuando a instalação...\n"
-      echo
-    else
-      printf "${WHITE} >> Falha ao baixar o código! Verifique as informações fornecidas...\n"
-      echo
+    # Verifica se o diretório já existe
+    if [ ! -d "${dest_dir}" ]; then
+      printf "${RED} >> ERRO: Diretório ${dest_dir} não encontrado!\n${WHITE}"
+      printf "${YELLOW} >> Os arquivos do front-end e back-end devem estar descompactados em ${dest_dir}\n${WHITE}"
+      printf "${YELLOW} >> Por favor, coloque os arquivos no servidor antes de continuar.\n${WHITE}"
       exit 1
     fi
+
+    # Verifica se os diretórios backend e frontend existem
+    if [ ! -d "${dest_dir}backend" ]; then
+      printf "${RED} >> ERRO: Diretório backend não encontrado em ${dest_dir}!\n${WHITE}"
+      exit 1
+    fi
+
+    if [ ! -d "${dest_dir}frontend" ]; then
+      printf "${RED} >> ERRO: Diretório frontend não encontrado em ${dest_dir}!\n${WHITE}"
+      exit 1
+    fi
+
+    printf "${GREEN} >> Arquivos encontrados no servidor, continuando a instalação...\n"
+    echo
 
     mkdir -p /home/deploy/${empresa}/backend/public/
     chown deploy:deploy -R /home/deploy/${empresa}/
@@ -1409,7 +1363,7 @@ instala_backend_base() {
     # subdominio_perfex=https://${subdominio_perfex}
     sudo su - deploy <<EOF
   cat <<[-]EOF > /home/deploy/${empresa}/backend/.env
-# Equipechat  - (81) 9 9998-8876
+# WebSite Vix - 27-992-494563
 NODE_ENV=
 BACKEND_URL=${subdominio_backend}
 FRONTEND_URL=${subdominio_frontend}
@@ -2133,9 +2087,14 @@ STOPPM2
   printf "${WHITE} >> Atualizando Backend...\n"
   echo
   cd "\$APP_DIR"
-  git fetch origin
-  git checkout MULTI100-OFICIAL-u21
-  git reset --hard origin/MULTI100-OFICIAL-u21
+  # Verifica se é um repositório git antes de tentar atualizar
+  if [ -d ".git" ]; then
+    git fetch origin 2>/dev/null || true
+    git checkout MULTI100-OFICIAL-u21 2>/dev/null || true
+    git reset --hard origin/MULTI100-OFICIAL-u21 2>/dev/null || true
+  else
+    printf "${YELLOW} >> Não é um repositório git. Continuando com arquivos locais...\n${WHITE}"
+  fi
   
   if [ ! -d "\$BACKEND_DIR" ]; then
     echo "ERRO: Diretório do backend não existe: \$BACKEND_DIR"
